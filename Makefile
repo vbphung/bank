@@ -16,4 +16,7 @@ migrate-up:
 migrate-down:
 	migrate -path $(MIGRATE_PATH) -database $(DB_URL) -verbose down
 
-.PHONY: init-postgres create-db drop-db migrate-up migrate-down
+sqlc:
+	sqlc generate
+
+.PHONY: init-postgres create-db drop-db migrate-up migrate-down sqlc
