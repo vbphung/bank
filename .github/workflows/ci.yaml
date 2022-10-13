@@ -3,12 +3,19 @@ name: ci-test
 on:
   push:
     branches: [master]
-  pull-request:
+  pull_request:
     branches: [master]
 
 jobs:
   name: Unit test
   runs-on: ubuntu-latest
+  services:
+    postgres:
+      image: postgres:14-alpine
+      env:
+        POSTGRES_DB: bank
+        POSTGRES_USER: root
+        POSTGRES_PASSWORD: postgres_password
   steps:
     - name: Setup Go
       uses: actions/setup-go@v2

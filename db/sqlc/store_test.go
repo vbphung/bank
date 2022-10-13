@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/herbi-dino/simple-bank/utils"
+	"github.com/herbi-dino/bank/utils"
 	"github.com/stretchr/testify/require"
 )
 

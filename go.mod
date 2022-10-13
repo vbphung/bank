@@ -1,4 +1,4 @@
-module github.com/herbi-dino/simple-bank
+module github.com/herbi-dino/bank
 
 go 1.19
 
