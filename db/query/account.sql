@@ -8,6 +8,12 @@ select * from accounts
 where id = $1
 limit 1;
 
+-- name: ReadAccountForUpdate :one
+select * from accounts
+where id = $1
+limit 1
+for no key update;
+
 -- name: UpdateAccount :one
 update accounts
 set balance = $2

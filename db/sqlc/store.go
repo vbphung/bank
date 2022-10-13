@@ -60,6 +60,30 @@ func (store *Store) Transfer(ctx context.Context, args TransferParams) (Transfer
 			return err
 		}
 
+		fromAcc, err := q.ReadAccountForUpdate(ctx, args.FromAcc)
+		if err != nil {
+			return err
+		}
+
+		if res.FromAcc, err = q.UpdateAccount(ctx, UpdateAccountParams{
+			ID:      fromAcc.ID,
+			Balance: fromAcc.Balance - args.Amount,
+		}); err != nil {
+			return err
+		}
+
+		toAcc, err := q.ReadAccountForUpdate(ctx, args.ToAcc)
+		if err != nil {
+			return err
+		}
+
+		if res.ToAcc, err = q.UpdateAccount(ctx, UpdateAccountParams{
+			ID:      toAcc.ID,
+			Balance: toAcc.Balance + args.Amount,
+		}); err != nil {
+			return err
+		}
+
 		return nil
 	})
 

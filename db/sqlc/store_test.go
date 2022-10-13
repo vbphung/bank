@@ -11,23 +11,23 @@ import (
 func TestTransfer(t *testing.T) {
 	store := CreateStore(testDb)
 
-	fromAcc := createAcc(t)
-	toAcc := createAcc(t)
+	initFromAcc := createAcc(t)
+	initToAcc := createAcc(t)
 
 	amounts := make(chan int64)
 
 	errors := make(chan error)
 	results := make(chan TransferResult)
 
-	times := 10
+	numOfCases := 10
 
-	for i := 0; i < times; i++ {
+	for i := 0; i < numOfCases; i++ {
 		go func() {
 			amount := utils.RandomBalance(100, 1000)
 
 			res, err := store.Transfer(context.Background(), TransferParams{
-				FromAcc: fromAcc.ID,
-				ToAcc:   toAcc.ID,
+				FromAcc: initFromAcc.ID,
+				ToAcc:   initToAcc.ID,
 				Amount:  amount,
 			})
 
@@ -38,8 +38,11 @@ func TestTransfer(t *testing.T) {
 		}()
 	}
 
-	for i := 0; i < times; i++ {
+	totalAmount := int64(0)
+
+	for i := 0; i < numOfCases; i++ {
 		amount := <-amounts
+		totalAmount += amount
 
 		err := <-errors
 		require.NoError(t, err)
@@ -47,38 +50,40 @@ func TestTransfer(t *testing.T) {
 		res := <-results
 		require.NotEmpty(t, res)
 
-		// test transfer
 		trf := res.Transfer
-
 		require.NotEmpty(t, trf)
+		require.Equal(t, initFromAcc.ID, trf.FromID)
+		require.Equal(t, initToAcc.ID, trf.ToID)
+		require.Equal(t, amount, trf.Amount)
 
-		require.Equal(t, trf.FromID, fromAcc.ID)
-		require.Equal(t, trf.ToID, toAcc.ID)
-		require.Equal(t, trf.Amount, amount)
-
-		_, err = store.ReadTransfer(context.Background(), trf.ID)
-		require.NoError(t, err)
-
-		// test from entry
 		fromEtr := res.FromEntry
-
 		require.NotEmpty(t, fromEtr)
+		require.Equal(t, initFromAcc.ID, fromEtr.AccountID)
+		require.Equal(t, -amount, fromEtr.Amount)
 
-		require.Equal(t, fromEtr.AccountID, fromAcc.ID)
-		require.Equal(t, fromEtr.Amount, -amount)
-
-		_, err = store.ReadEntry(context.Background(), fromEtr.ID)
-		require.NoError(t, err)
-
-		// test to entry
 		toEtr := res.ToEntry
-
 		require.NotEmpty(t, toEtr)
+		require.Equal(t, initToAcc.ID, toEtr.AccountID)
+		require.Equal(t, amount, toEtr.Amount)
 
-		require.Equal(t, toEtr.AccountID, toAcc.ID)
-		require.Equal(t, toEtr.Amount, amount)
+		trfFromAcc := res.FromAcc
+		require.NotEmpty(t, trfFromAcc)
+		require.Equal(t, initFromAcc.ID, trfFromAcc.ID)
 
-		_, err = store.ReadEntry(context.Background(), toEtr.ID)
-		require.NoError(t, err)
+		trfToAcc := res.ToAcc
+		require.NotEmpty(t, trfToAcc)
+		require.Equal(t, initToAcc.ID, trfToAcc.ID)
+
+		fromDiff := initFromAcc.Balance - trfFromAcc.Balance
+		toDiff := initToAcc.Balance - trfToAcc.Balance
+		require.Equal(t, int64(0), fromDiff+toDiff)
 	}
+
+	finalFromAcc, err := testQueries.ReadAccount(context.Background(), initFromAcc.ID)
+	require.NoError(t, err)
+	require.Equal(t, initFromAcc.Balance-totalAmount, finalFromAcc.Balance)
+
+	finalToAcc, err := testQueries.ReadAccount(context.Background(), initToAcc.ID)
+	require.NoError(t, err)
+	require.Equal(t, initToAcc.Balance+totalAmount, finalToAcc.Balance)
 }

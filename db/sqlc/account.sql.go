@@ -68,6 +68,25 @@ func (q *Queries) ReadAccount(ctx context.Context, id int64) (Account, error) {
 	return i, err
 }
 
+const readAccountForUpdate = `-- name: ReadAccountForUpdate :one
+select id, full_name, balance, created_at from accounts
+where id = $1
+limit 1
+for no key update
+`
+
+func (q *Queries) ReadAccountForUpdate(ctx context.Context, id int64) (Account, error) {
+	row := q.db.QueryRowContext(ctx, readAccountForUpdate, id)
+	var i Account
+	err := row.Scan(
+		&i.ID,
+		&i.FullName,
+		&i.Balance,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const updateAccount = `-- name: UpdateAccount :one
 update accounts
 set balance = $2
