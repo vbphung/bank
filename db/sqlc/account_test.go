@@ -54,7 +54,7 @@ func TestDeleteAccount(t *testing.T) {
 	require.Equal(t, deletedAcc.ID, acc.ID)
 }
 
-func createAcc(t *testing.T) Accounts {
+func createAcc(t *testing.T) Account {
 	args := CreateAccountParams{
 		FullName: utils.RandomFullName(),
 		Balance:  utils.RandomBalance(100, 1000),

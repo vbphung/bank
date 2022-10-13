@@ -8,21 +8,21 @@ import (
 	"time"
 )
 
-type Accounts struct {
+type Account struct {
 	ID        int64     `json:"id"`
 	FullName  string    `json:"full_name"`
 	Balance   int64     `json:"balance"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
-type Entries struct {
+type Entry struct {
 	ID        int64     `json:"id"`
 	AccountID int64     `json:"account_id"`
 	Amount    int64     `json:"amount"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
-type Transfers struct {
+type Transfer struct {
 	ID        int64     `json:"id"`
 	FromID    int64     `json:"from_id"`
 	ToID      int64     `json:"to_id"`
