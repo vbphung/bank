@@ -7,7 +7,7 @@ create table entries (
 
 alter table entries
 add constraint fk_entries_account_id
-foreign key (id) references accounts(id);
+foreign key (account_id) references accounts(id);
 
 create index idx_entries_account_id
 on entries(account_id);
