@@ -23,7 +23,7 @@ func TestTransfer(t *testing.T) {
 
 	for i := 0; i < numOfCases; i++ {
 		go func() {
-			amount := utils.RandomBalance(100, 1000)
+			amount := utils.RandomAmount(100, 1000)
 
 			res, err := store.Transfer(context.Background(), TransferParams{
 				FromAcc: initFromAcc.ID,
@@ -86,4 +86,49 @@ func TestTransfer(t *testing.T) {
 	finalToAcc, err := testQueries.ReadAccount(context.Background(), initToAcc.ID)
 	require.NoError(t, err)
 	require.Equal(t, initToAcc.Balance+totalAmount, finalToAcc.Balance)
+}
+
+func TestDeadlock(t *testing.T) {
+	store := CreateStore(testDb)
+
+	acc1 := createAcc(t)
+	acc2 := createAcc(t)
+
+	errors := make(chan error)
+
+	numOfCases := 10
+	amount := utils.RandomAmount(100, 1000)
+
+	for i := 0; i < numOfCases; i++ {
+		fromId := acc1.ID
+		toId := acc2.ID
+
+		if i%2 == 1 {
+			fromId = acc2.ID
+			toId = acc1.ID
+		}
+
+		go func() {
+			_, err := store.Transfer(context.Background(), TransferParams{
+				FromAcc: fromId,
+				ToAcc:   toId,
+				Amount:  amount,
+			})
+
+			errors <- err
+		}()
+	}
+
+	for i := 0; i < numOfCases; i++ {
+		err := <-errors
+		require.NoError(t, err)
+	}
+
+	finalAcc1, err := testQueries.ReadAccount(context.Background(), acc1.ID)
+	require.NoError(t, err)
+	require.Equal(t, acc1.Balance, finalAcc1.Balance)
+
+	finalAcc2, err := testQueries.ReadAccount(context.Background(), acc2.ID)
+	require.NoError(t, err)
+	require.Equal(t, acc2.Balance, finalAcc2.Balance)
 }

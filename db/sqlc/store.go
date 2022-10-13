@@ -60,28 +60,18 @@ func (store *Store) Transfer(ctx context.Context, args TransferParams) (Transfer
 			return err
 		}
 
-		fromAcc, err := q.ReadAccountForUpdate(ctx, args.FromAcc)
-		if err != nil {
-			return err
-		}
-
-		if res.FromAcc, err = q.UpdateAccount(ctx, UpdateAccountParams{
-			ID:      fromAcc.ID,
-			Balance: fromAcc.Balance - args.Amount,
-		}); err != nil {
-			return err
-		}
-
-		toAcc, err := q.ReadAccountForUpdate(ctx, args.ToAcc)
-		if err != nil {
-			return err
-		}
-
-		if res.ToAcc, err = q.UpdateAccount(ctx, UpdateAccountParams{
-			ID:      toAcc.ID,
-			Balance: toAcc.Balance + args.Amount,
-		}); err != nil {
-			return err
+		if args.FromAcc > args.ToAcc {
+			if res.FromAcc, res.ToAcc, err = transfer(
+				ctx, q, args.FromAcc, args.ToAcc, args.Amount,
+			); err != nil {
+				return err
+			}
+		} else {
+			if res.ToAcc, res.FromAcc, err = transfer(
+				ctx, q, args.ToAcc, args.FromAcc, -args.Amount,
+			); err != nil {
+				return err
+			}
 		}
 
 		return nil
@@ -107,4 +97,29 @@ func (store *Store) execTx(ctx context.Context, txFunc func(*Queries) error) err
 	}
 
 	return tx.Commit()
+}
+
+func transfer(
+	ctx context.Context,
+	q *Queries,
+	id1, id2, amount int64,
+) (
+	acc1, acc2 Account,
+	err error,
+) {
+	if acc1, err = q.UpdateBalance(ctx, UpdateBalanceParams{
+		ID:     id1,
+		Amount: -amount,
+	}); err != nil {
+		return
+	}
+
+	if acc2, err = q.UpdateBalance(ctx, UpdateBalanceParams{
+		ID:     id2,
+		Amount: amount,
+	}); err != nil {
+		return
+	}
+
+	return
 }

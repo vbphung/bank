@@ -14,7 +14,7 @@ func RandomFullName() string {
 	return fmt.Sprintf("%s %s", pickFirstName(), pickLastName())
 }
 
-func RandomBalance(min, max int64) int64 {
+func RandomAmount(min, max int64) int64 {
 	return rand.Int63n(max-min+1) + min
 }
 

@@ -30,7 +30,7 @@ func TestUpdateAccount(t *testing.T) {
 
 	args := UpdateAccountParams{
 		ID:      acc.ID,
-		Balance: utils.RandomBalance(1000, 2000),
+		Balance: utils.RandomAmount(1000, 2000),
 	}
 
 	updatedAcc, err := testQueries.UpdateAccount(context.Background(), args)
@@ -57,7 +57,7 @@ func TestDeleteAccount(t *testing.T) {
 func createAcc(t *testing.T) Account {
 	args := CreateAccountParams{
 		FullName: utils.RandomFullName(),
-		Balance:  utils.RandomBalance(100, 1000),
+		Balance:  utils.RandomAmount(100, 1000),
 	}
 
 	acc, err := testQueries.CreateAccount(context.Background(), args)
