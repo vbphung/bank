@@ -10,6 +10,7 @@ import (
 
 type Accounts struct {
 	ID        int64     `json:"id"`
+	FullName  string    `json:"full_name"`
 	Balance   int64     `json:"balance"`
 	CreatedAt time.Time `json:"created_at"`
 }

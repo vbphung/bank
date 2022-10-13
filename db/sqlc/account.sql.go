@@ -11,16 +11,26 @@ import (
 
 const createAccount = `-- name: CreateAccount :one
 insert into accounts (
-    balance
+    full_name, balance
 ) values (
-    $1
-) returning id, balance, created_at
+    $1, $2
+) returning id, full_name, balance, created_at
 `
 
-func (q *Queries) CreateAccount(ctx context.Context, balance int64) (Accounts, error) {
-	row := q.db.QueryRowContext(ctx, createAccount, balance)
+type CreateAccountParams struct {
+	FullName string `json:"full_name"`
+	Balance  int64  `json:"balance"`
+}
+
+func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (Accounts, error) {
+	row := q.db.QueryRowContext(ctx, createAccount, arg.FullName, arg.Balance)
 	var i Accounts
-	err := row.Scan(&i.ID, &i.Balance, &i.CreatedAt)
+	err := row.Scan(
+		&i.ID,
+		&i.FullName,
+		&i.Balance,
+		&i.CreatedAt,
+	)
 	return i, err
 }
 
@@ -35,7 +45,7 @@ func (q *Queries) DeleteAccount(ctx context.Context, id int64) error {
 }
 
 const getAccount = `-- name: GetAccount :one
-select id, balance, created_at from accounts
+select id, full_name, balance, created_at from accounts
 where id = $1
 limit 1
 `
@@ -43,7 +53,12 @@ limit 1
 func (q *Queries) GetAccount(ctx context.Context, id int64) (Accounts, error) {
 	row := q.db.QueryRowContext(ctx, getAccount, id)
 	var i Accounts
-	err := row.Scan(&i.ID, &i.Balance, &i.CreatedAt)
+	err := row.Scan(
+		&i.ID,
+		&i.FullName,
+		&i.Balance,
+		&i.CreatedAt,
+	)
 	return i, err
 }
 

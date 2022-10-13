@@ -1,8 +1,8 @@
 -- name: CreateAccount :one
 insert into accounts (
-    balance
+    full_name, balance
 ) values (
-    $1
+    $1, $2
 ) returning *;
 
 -- name: GetAccount :one
