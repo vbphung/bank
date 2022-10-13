@@ -5,17 +5,19 @@ insert into accounts (
     $1, $2
 ) returning *;
 
--- name: GetAccount :one
+-- name: ReadAccount :one
 select * from accounts
 where id = $1
 limit 1;
 
 
--- name: UpdateAccount :exec
+-- name: UpdateAccount :one
 update accounts
 set balance = $2
-where id = $1;
+where id = $1
+returning *;
 
--- name: DeleteAccount :exec
+-- name: DeleteAccount :one
 delete from accounts
-where id = $1;
+where id = $1
+returning *;

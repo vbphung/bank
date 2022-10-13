@@ -34,24 +34,14 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (A
 	return i, err
 }
 
-const deleteAccount = `-- name: DeleteAccount :exec
+const deleteAccount = `-- name: DeleteAccount :one
 delete from accounts
 where id = $1
+returning id, full_name, balance, created_at
 `
 
-func (q *Queries) DeleteAccount(ctx context.Context, id int64) error {
-	_, err := q.db.ExecContext(ctx, deleteAccount, id)
-	return err
-}
-
-const getAccount = `-- name: GetAccount :one
-select id, full_name, balance, created_at from accounts
-where id = $1
-limit 1
-`
-
-func (q *Queries) GetAccount(ctx context.Context, id int64) (Accounts, error) {
-	row := q.db.QueryRowContext(ctx, getAccount, id)
+func (q *Queries) DeleteAccount(ctx context.Context, id int64) (Accounts, error) {
+	row := q.db.QueryRowContext(ctx, deleteAccount, id)
 	var i Accounts
 	err := row.Scan(
 		&i.ID,
@@ -62,10 +52,29 @@ func (q *Queries) GetAccount(ctx context.Context, id int64) (Accounts, error) {
 	return i, err
 }
 
-const updateAccount = `-- name: UpdateAccount :exec
+const readAccount = `-- name: ReadAccount :one
+select id, full_name, balance, created_at from accounts
+where id = $1
+limit 1
+`
+
+func (q *Queries) ReadAccount(ctx context.Context, id int64) (Accounts, error) {
+	row := q.db.QueryRowContext(ctx, readAccount, id)
+	var i Accounts
+	err := row.Scan(
+		&i.ID,
+		&i.FullName,
+		&i.Balance,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const updateAccount = `-- name: UpdateAccount :one
 update accounts
 set balance = $2
 where id = $1
+returning id, full_name, balance, created_at
 `
 
 type UpdateAccountParams struct {
@@ -73,7 +82,14 @@ type UpdateAccountParams struct {
 	Balance int64 `json:"balance"`
 }
 
-func (q *Queries) UpdateAccount(ctx context.Context, arg UpdateAccountParams) error {
-	_, err := q.db.ExecContext(ctx, updateAccount, arg.ID, arg.Balance)
-	return err
+func (q *Queries) UpdateAccount(ctx context.Context, arg UpdateAccountParams) (Accounts, error) {
+	row := q.db.QueryRowContext(ctx, updateAccount, arg.ID, arg.Balance)
+	var i Accounts
+	err := row.Scan(
+		&i.ID,
+		&i.FullName,
+		&i.Balance,
+		&i.CreatedAt,
+	)
+	return i, err
 }
