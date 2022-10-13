@@ -10,11 +10,9 @@ import (
 )
 
 const createAccount = `-- name: CreateAccount :one
-insert into accounts (
-    full_name, balance
-) values (
-    $1, $2
-) returning id, full_name, balance, created_at
+insert into accounts (full_name, balance)
+values ($1, $2)
+returning id, full_name, balance, created_at
 `
 
 type CreateAccountParams struct {

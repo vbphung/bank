@@ -1,15 +1,12 @@
 -- name: CreateAccount :one
-insert into accounts (
-    full_name, balance
-) values (
-    $1, $2
-) returning *;
+insert into accounts (full_name, balance)
+values ($1, $2)
+returning *;
 
 -- name: ReadAccount :one
 select * from accounts
 where id = $1
 limit 1;
-
 
 -- name: UpdateAccount :one
 update accounts
