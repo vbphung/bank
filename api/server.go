@@ -32,17 +32,3 @@ func (server *Server) initRouter() {
 
 	server.router = router
 }
-
-func successResponse(result any) gin.H {
-	return gin.H{
-		"status": "success",
-		"result": result,
-	}
-}
-
-func failedResponse(err error) gin.H {
-	return gin.H{
-		"status": "failed",
-		"error":  err.Error(),
-	}
-}
