@@ -8,11 +8,6 @@ import (
 	_ "github.com/golang/mock/mockgen/model"
 )
 
-type IStore interface {
-	Querier
-	Transfer(ctx context.Context, args TransferParams) (TransferResult, error)
-}
-
 type Store struct {
 	*Queries
 	db *sql.DB
@@ -32,7 +27,7 @@ type TransferResult struct {
 	ToEntry   Entry    `json:"to_entry"`
 }
 
-func CreateStore(storeDb *sql.DB) IStore {
+func CreateStore(storeDb *sql.DB) *Store {
 	return &Store{
 		db:      storeDb,
 		Queries: New(storeDb),
