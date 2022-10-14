@@ -11,23 +11,26 @@ type Server struct {
 }
 
 func CreateServer(svStore *db.Store) *Server {
-	sever := &Server{store: svStore}
+	server := &Server{store: svStore}
+	server.initRouter()
 
-	router := gin.Default()
-
-	router.POST("/account", sever.createAccount)
-	router.GET("/account", sever.readAccount)
-	router.DELETE("/account", sever.deleteAccount)
-
-	router.POST("/transfer", sever.transfer)
-
-	sever.router = router
-
-	return sever
+	return server
 }
 
 func (server *Server) Start(addr string) error {
 	return server.router.Run(addr)
+}
+
+func (server *Server) initRouter() {
+	router := gin.Default()
+
+	router.POST("/account", server.createAccount)
+	router.GET("/account/:id", server.readAccount)
+	router.DELETE("/account", server.deleteAccount)
+
+	router.POST("/transfer", server.transfer)
+
+	server.router = router
 }
 
 func successResponse(result any) gin.H {

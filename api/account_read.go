@@ -8,12 +8,12 @@ import (
 )
 
 type readAccountReq struct {
-	ID int64 `json:"id" binding:"required,min=1"`
+	ID int64 `uri:"id" binding:"required,min=1"`
 }
 
 func (server *Server) readAccount(ctx *gin.Context) {
 	var req readAccountReq
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+	if err := ctx.ShouldBindUri(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, failedResponse(err))
 		return
 	}
