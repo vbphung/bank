@@ -6,18 +6,18 @@ import (
 
 	"github.com/herbi-dino/bank/api"
 	db "github.com/herbi-dino/bank/db/sqlc"
+	"github.com/herbi-dino/bank/utils"
 
 	_ "github.com/lib/pq"
 )
 
-const (
-	dbDriver   = "postgres"
-	dbSource   = "postgresql://root:postgres_password@localhost:5432/bank?sslmode=disable"
-	serverAddr = "0.0.0.0:8080"
-)
-
 func main() {
-	conn, err := sql.Open(dbDriver, dbSource)
+	cfg, err := utils.LoadConfig("./")
+	if err != nil {
+		log.Fatalf("load config failed: %+v\n", err)
+	}
+
+	conn, err := sql.Open(cfg.DbDriver, cfg.DbSource)
 	if err != nil {
 		log.Fatalf("connect db failed: %+v\n", err)
 	}
@@ -26,7 +26,7 @@ func main() {
 
 	server := api.CreateServer(store)
 
-	err = server.Start(serverAddr)
+	err = server.Start(cfg.ServerAddr)
 	if err != nil {
 		log.Fatalf("start server failed: %+v\n", err)
 	}
