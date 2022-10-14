@@ -28,19 +28,19 @@ func TestReadAccount(t *testing.T) {
 func TestUpdateAccount(t *testing.T) {
 	acc := createAcc(t)
 
-	args := UpdateAccountParams{
-		ID:      acc.ID,
-		Balance: utils.RandomAmount(1000, 2000),
+	args := ChangePasswordParams{
+		ID:       acc.ID,
+		Password: "new_password",
 	}
 
-	updatedAcc, err := testQueries.UpdateAccount(context.Background(), args)
+	updatedAcc, err := testQueries.ChangePassword(context.Background(), args)
 
 	require.NoError(t, err)
 	require.NotEmpty(t, updatedAcc)
 
 	require.Equal(t, updatedAcc.ID, acc.ID)
 
-	require.Equal(t, updatedAcc.Balance, args.Balance)
+	require.Equal(t, updatedAcc.Balance, args.Password)
 }
 
 func TestDeleteAccount(t *testing.T) {
@@ -57,6 +57,7 @@ func TestDeleteAccount(t *testing.T) {
 func createAcc(t *testing.T) Account {
 	args := CreateAccountParams{
 		FullName: utils.RandomFullName(),
+		Password: "init_password",
 		Balance:  utils.RandomAmount(100, 1000),
 	}
 

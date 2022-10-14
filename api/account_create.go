@@ -9,6 +9,7 @@ import (
 
 type createAccountReq struct {
 	FullName string `json:"full_name" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
 func (server *Server) createAccount(ctx *gin.Context) {

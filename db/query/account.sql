@@ -1,6 +1,6 @@
 -- name: CreateAccount :one
-insert into accounts (full_name, balance)
-values ($1, $2)
+insert into accounts (full_name, password, balance)
+values ($1, $2, $3)
 returning *;
 
 -- name: ReadAccount :one
@@ -14,9 +14,9 @@ where id = $1
 limit 1
 for no key update;
 
--- name: UpdateAccount :one
+-- name: ChangePassword :one
 update accounts
-set balance = $2
+set password = $2
 where id = $1
 returning *;
 

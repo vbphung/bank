@@ -9,24 +9,53 @@ import (
 	"context"
 )
 
-const createAccount = `-- name: CreateAccount :one
-insert into accounts (full_name, balance)
-values ($1, $2)
-returning id, full_name, balance, created_at
+const changePassword = `-- name: ChangePassword :one
+update accounts
+set password = $2
+where id = $1
+returning id, full_name, password, balance, password_changed_at, created_at
 `
 
-type CreateAccountParams struct {
-	FullName string `json:"full_name"`
-	Balance  int64  `json:"balance"`
+type ChangePasswordParams struct {
+	ID       int64  `json:"id"`
+	Password string `json:"password"`
 }
 
-func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (Account, error) {
-	row := q.db.QueryRowContext(ctx, createAccount, arg.FullName, arg.Balance)
+func (q *Queries) ChangePassword(ctx context.Context, arg ChangePasswordParams) (Account, error) {
+	row := q.db.QueryRowContext(ctx, changePassword, arg.ID, arg.Password)
 	var i Account
 	err := row.Scan(
 		&i.ID,
 		&i.FullName,
+		&i.Password,
 		&i.Balance,
+		&i.PasswordChangedAt,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const createAccount = `-- name: CreateAccount :one
+insert into accounts (full_name, password, balance)
+values ($1, $2, $3)
+returning id, full_name, password, balance, password_changed_at, created_at
+`
+
+type CreateAccountParams struct {
+	FullName string `json:"full_name"`
+	Password string `json:"password"`
+	Balance  int64  `json:"balance"`
+}
+
+func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (Account, error) {
+	row := q.db.QueryRowContext(ctx, createAccount, arg.FullName, arg.Password, arg.Balance)
+	var i Account
+	err := row.Scan(
+		&i.ID,
+		&i.FullName,
+		&i.Password,
+		&i.Balance,
+		&i.PasswordChangedAt,
 		&i.CreatedAt,
 	)
 	return i, err
@@ -35,7 +64,7 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (A
 const deleteAccount = `-- name: DeleteAccount :one
 delete from accounts
 where id = $1
-returning id, full_name, balance, created_at
+returning id, full_name, password, balance, password_changed_at, created_at
 `
 
 func (q *Queries) DeleteAccount(ctx context.Context, id int64) (Account, error) {
@@ -44,14 +73,16 @@ func (q *Queries) DeleteAccount(ctx context.Context, id int64) (Account, error) 
 	err := row.Scan(
 		&i.ID,
 		&i.FullName,
+		&i.Password,
 		&i.Balance,
+		&i.PasswordChangedAt,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
 const readAccount = `-- name: ReadAccount :one
-select id, full_name, balance, created_at from accounts
+select id, full_name, password, balance, password_changed_at, created_at from accounts
 where id = $1
 limit 1
 `
@@ -62,14 +93,16 @@ func (q *Queries) ReadAccount(ctx context.Context, id int64) (Account, error) {
 	err := row.Scan(
 		&i.ID,
 		&i.FullName,
+		&i.Password,
 		&i.Balance,
+		&i.PasswordChangedAt,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
 const readAccountForUpdate = `-- name: ReadAccountForUpdate :one
-select id, full_name, balance, created_at from accounts
+select id, full_name, password, balance, password_changed_at, created_at from accounts
 where id = $1
 limit 1
 for no key update
@@ -81,31 +114,9 @@ func (q *Queries) ReadAccountForUpdate(ctx context.Context, id int64) (Account, 
 	err := row.Scan(
 		&i.ID,
 		&i.FullName,
+		&i.Password,
 		&i.Balance,
-		&i.CreatedAt,
-	)
-	return i, err
-}
-
-const updateAccount = `-- name: UpdateAccount :one
-update accounts
-set balance = $2
-where id = $1
-returning id, full_name, balance, created_at
-`
-
-type UpdateAccountParams struct {
-	ID      int64 `json:"id"`
-	Balance int64 `json:"balance"`
-}
-
-func (q *Queries) UpdateAccount(ctx context.Context, arg UpdateAccountParams) (Account, error) {
-	row := q.db.QueryRowContext(ctx, updateAccount, arg.ID, arg.Balance)
-	var i Account
-	err := row.Scan(
-		&i.ID,
-		&i.FullName,
-		&i.Balance,
+		&i.PasswordChangedAt,
 		&i.CreatedAt,
 	)
 	return i, err
@@ -115,7 +126,7 @@ const updateBalance = `-- name: UpdateBalance :one
 update accounts
 set balance = balance + $1
 where id = $2
-returning id, full_name, balance, created_at
+returning id, full_name, password, balance, password_changed_at, created_at
 `
 
 type UpdateBalanceParams struct {
@@ -129,7 +140,9 @@ func (q *Queries) UpdateBalance(ctx context.Context, arg UpdateBalanceParams) (A
 	err := row.Scan(
 		&i.ID,
 		&i.FullName,
+		&i.Password,
 		&i.Balance,
+		&i.PasswordChangedAt,
 		&i.CreatedAt,
 	)
 	return i, err
