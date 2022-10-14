@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/herbi-dino/bank/api"
-	db "github.com/herbi-dino/bank/db/sqlc"
-	"github.com/herbi-dino/bank/utils"
+	"github.com/vbph/bank/api"
+	db "github.com/vbph/bank/db/sqlc"
+	"github.com/vbph/bank/utils"
 
 	_ "github.com/lib/pq"
 )

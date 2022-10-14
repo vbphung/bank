@@ -1,4 +1,4 @@
-module github.com/herbi-dino/bank
+module github.com/vbph/bank
 
 go 1.19
 

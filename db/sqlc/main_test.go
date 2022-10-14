@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/herbi-dino/bank/utils"
 	_ "github.com/lib/pq"
+	"github.com/vbph/bank/utils"
 )
 
 var testQueries *Queries

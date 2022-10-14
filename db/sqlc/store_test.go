@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/herbi-dino/bank/utils"
 	"github.com/stretchr/testify/require"
+	"github.com/vbph/bank/utils"
 )
 
 func TestTransfer(t *testing.T) {

@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	db "github.com/herbi-dino/bank/db/sqlc"
+	db "github.com/vbph/bank/db/sqlc"
 )
 
 type createAccountReq struct {
