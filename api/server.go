@@ -15,8 +15,11 @@ func CreateServer(svStore *db.Store) *Server {
 
 	router := gin.Default()
 
-	router.POST("/accounts", sever.createAccount)
-	router.GET("/accounts", sever.readAccount)
+	router.POST("/account", sever.createAccount)
+	router.GET("/account", sever.readAccount)
+	router.DELETE("/account", sever.deleteAccount)
+
+	router.POST("/transfer", sever.transfer)
 
 	sever.router = router
 
