@@ -39,13 +39,13 @@ func (server *Server) Start(addr string) error {
 func (server *Server) initRouter() {
 	router := gin.Default()
 
-	router.GET("/account/:id", server.readAccount)
-	router.DELETE("/account", server.deleteAccount)
+	router.POST("/auth/sign-up", server.signUp)
+	router.POST("/auth/login", server.login)
 
 	authRouter := router.Group("/").Use(middlewares.Auth(server.tokenMaker))
 
-	authRouter.POST("/auth/sign-up", server.signUp)
-	authRouter.POST("/auth/login", server.login)
+	authRouter.GET("/account/:id", server.readAccount)
+	authRouter.DELETE("/account", server.deleteAccount)
 
 	authRouter.POST("/transfer", server.transfer)
 

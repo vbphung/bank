@@ -12,7 +12,7 @@ import (
 
 func Auth(tokenMaker token.Maker) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		authHeader := ctx.GetHeader("auth")
+		authHeader := ctx.GetHeader("authorization")
 		if len(authHeader) == 0 {
 			unauthorizedJsonAbort("auth token is not provided", ctx)
 			return
