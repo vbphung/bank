@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	db "github.com/vbph/bank/db/sqlc"
+	"github.com/vbph/bank/utils"
 )
 
 type transferReq struct {
@@ -16,7 +17,7 @@ type transferReq struct {
 func (server *Server) transfer(ctx *gin.Context) {
 	var req transferReq
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, failedResponse(err))
+		ctx.JSON(http.StatusBadRequest, utils.FailedResponse(err))
 		return
 	}
 
@@ -27,9 +28,9 @@ func (server *Server) transfer(ctx *gin.Context) {
 	})
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, failedResponse(err))
+		ctx.JSON(http.StatusInternalServerError, utils.FailedResponse(err))
 		return
 	}
 
-	ctx.JSON(http.StatusOK, successResponse(trfRes))
+	ctx.JSON(http.StatusOK, utils.SuccessResponse(trfRes))
 }

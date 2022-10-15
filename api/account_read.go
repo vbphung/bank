@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/vbph/bank/utils"
 )
 
 type readAccountReq struct {
@@ -14,20 +15,20 @@ type readAccountReq struct {
 func (server *Server) readAccount(ctx *gin.Context) {
 	var req readAccountReq
 	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, failedResponse(err))
+		ctx.JSON(http.StatusBadRequest, utils.FailedResponse(err))
 		return
 	}
 
 	acc, err := server.store.ReadAccount(ctx, req.ID)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, failedResponse(err))
+			ctx.JSON(http.StatusNotFound, utils.FailedResponse(err))
 			return
 		}
 
-		ctx.JSON(http.StatusBadRequest, failedResponse(err))
+		ctx.JSON(http.StatusBadRequest, utils.FailedResponse(err))
 		return
 	}
 
-	ctx.JSON(http.StatusOK, successResponse(acc))
+	ctx.JSON(http.StatusOK, utils.SuccessResponse(acc))
 }

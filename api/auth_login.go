@@ -20,36 +20,36 @@ type loginRes struct {
 func (server *Server) login(ctx *gin.Context) {
 	var req loginReq
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, failedResponse(err))
+		ctx.JSON(http.StatusBadRequest, utils.FailedResponse(err))
 		return
 	}
 
 	acc, err := server.store.ReadAccount(ctx, req.ID)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, failedResponse(err))
+			ctx.JSON(http.StatusNotFound, utils.FailedResponse(err))
 			return
 		}
 
-		ctx.JSON(http.StatusInternalServerError, failedResponse(err))
+		ctx.JSON(http.StatusInternalServerError, utils.FailedResponse(err))
 		return
 	}
 
 	err = utils.VerifyPassword(req.Password, acc.Password)
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, failedResponse(err))
+		ctx.JSON(http.StatusUnauthorized, utils.FailedResponse(err))
 		return
 	}
 
 	accessTk, err := server.tokenMaker.CreateToken(acc.ID, server.config.AccessTokenExpiredTime)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, failedResponse(err))
+		ctx.JSON(http.StatusInternalServerError, utils.FailedResponse(err))
 		return
 	}
 
 	ctx.JSON(
 		http.StatusOK,
-		successResponse(
+		utils.SuccessResponse(
 			loginRes{
 				AccessToken: accessTk,
 			},

@@ -21,13 +21,13 @@ type signUpRes struct {
 func (server *Server) signUp(ctx *gin.Context) {
 	var req signUpReq
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, failedResponse(err))
+		ctx.JSON(http.StatusBadRequest, utils.FailedResponse(err))
 		return
 	}
 
 	hashedPassword, err := utils.HashPassword(req.Password)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, failedResponse(err))
+		ctx.JSON(http.StatusInternalServerError, utils.FailedResponse(err))
 		return
 	}
 
@@ -38,19 +38,19 @@ func (server *Server) signUp(ctx *gin.Context) {
 	})
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, failedResponse(err))
+		ctx.JSON(http.StatusInternalServerError, utils.FailedResponse(err))
 		return
 	}
 
 	accessTk, err := server.tokenMaker.CreateToken(acc.ID, server.config.AccessTokenExpiredTime)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, failedResponse(err))
+		ctx.JSON(http.StatusInternalServerError, utils.FailedResponse(err))
 		return
 	}
 
 	ctx.JSON(
 		http.StatusOK,
-		successResponse(
+		utils.SuccessResponse(
 			signUpRes{
 				Account:     accountResponse(acc),
 				AccessToken: accessTk,
