@@ -11,6 +11,7 @@ type Server struct {
 	store      *db.Store
 	router     *gin.Engine
 	tokenMaker token.Maker
+	config     utils.Config
 }
 
 func CreateServer(config utils.Config, dbStore *db.Store) (*Server, error) {
@@ -22,6 +23,7 @@ func CreateServer(config utils.Config, dbStore *db.Store) (*Server, error) {
 	server := &Server{
 		store:      dbStore,
 		tokenMaker: tokenMaker,
+		config:     config,
 	}
 
 	server.initRouter()
@@ -36,7 +38,9 @@ func (server *Server) Start(addr string) error {
 func (server *Server) initRouter() {
 	router := gin.Default()
 
-	router.POST("/account", server.createAccount)
+	router.POST("/auth/sign-up", server.signUp)
+	router.POST("/auth/login", server.login)
+
 	router.GET("/account/:id", server.readAccount)
 	router.DELETE("/account", server.deleteAccount)
 

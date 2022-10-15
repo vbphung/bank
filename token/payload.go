@@ -9,12 +9,12 @@ import (
 
 type Payload struct {
 	ID        uuid.UUID `json:"id"`
-	AccountID string    `json:"account_id"`
+	AccountID int64     `json:"account_id"`
 	IssuedAt  time.Time `json:"issued_at"`
 	ExpiredAt time.Time `json:"expired_at"`
 }
 
-func CreatePayload(accId string, expiredIn time.Duration) (*Payload, error) {
+func CreatePayload(accountId int64, expiredIn time.Duration) (*Payload, error) {
 	id, err := uuid.NewRandom()
 	if err != nil {
 		return nil, err
@@ -22,7 +22,7 @@ func CreatePayload(accId string, expiredIn time.Duration) (*Payload, error) {
 
 	return &Payload{
 		ID:        id,
-		AccountID: accId,
+		AccountID: accountId,
 		IssuedAt:  time.Now(),
 		ExpiredAt: time.Now().Add(expiredIn),
 	}, nil

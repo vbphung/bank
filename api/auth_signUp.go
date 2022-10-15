@@ -8,13 +8,18 @@ import (
 	"github.com/vbph/bank/utils"
 )
 
-type createAccountReq struct {
+type signUpReq struct {
 	FullName string `json:"full_name" binding:"required"`
 	Password string `json:"password" binding:"required,min=8"`
 }
 
-func (server *Server) createAccount(ctx *gin.Context) {
-	var req createAccountReq
+type signUpRes struct {
+	Account     accountRes `json:"account"`
+	AccessToken string     `json:"access_token"`
+}
+
+func (server *Server) signUp(ctx *gin.Context) {
+	var req signUpReq
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, failedResponse(err))
 		return
@@ -37,8 +42,19 @@ func (server *Server) createAccount(ctx *gin.Context) {
 		return
 	}
 
+	accessTk, err := server.tokenMaker.CreateToken(acc.ID, server.config.AccessTokenExpiredTime)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, failedResponse(err))
+		return
+	}
+
 	ctx.JSON(
 		http.StatusOK,
-		successResponse(accountResponse(acc)),
+		successResponse(
+			signUpRes{
+				Account:     accountResponse(acc),
+				AccessToken: accessTk,
+			},
+		),
 	)
 }
