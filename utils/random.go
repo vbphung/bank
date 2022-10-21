@@ -11,23 +11,20 @@ func init() {
 }
 
 func RandomEmail() string {
-	return fmt.Sprintf("%s %s", pickFirstName(), pickLastName())
+	return fmt.Sprintf("%s@%s.com", pickStr(16), pickStr(7))
 }
 
 func RandomAmount(min, max int64) int64 {
 	return rand.Int63n(max-min+1) + min
 }
 
-func pickLastName() string {
-	lastNames := []string{"Hightower", "Stark", "Lannister", "Targaryen", "Velaryon"}
-	return pickName(lastNames)
-}
+func pickStr(strLen int64) string {
+	chars := []rune("abcdefghijklmnopqrstuvwxyz")
 
-func pickFirstName() string {
-	firstNames := []string{"Alicent", "Otto", "Corlys", "Jon", "Jaime"}
-	return pickName(firstNames)
-}
+	str := make([]rune, strLen)
+	for i := range str {
+		str[i] = chars[rand.Intn(len(chars))]
+	}
 
-func pickName(names []string) string {
-	return names[rand.Intn(len(names))]
+	return string(str)
 }

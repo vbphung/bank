@@ -6,3 +6,10 @@ create table accounts (
     password_changed_at timestamptz not null default (now()),
     created_at timestamptz not null default (now())
 );
+
+alter table accounts
+add constraint u_accounts_email
+unique (email);
+
+create index idx_accounts_email
+on accounts(email);
