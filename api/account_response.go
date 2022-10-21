@@ -8,7 +8,7 @@ import (
 
 type accountRes struct {
 	ID                int64     `json:"id"`
-	FullName          string    `json:"full_name"`
+	Email             string    `json:"email"`
 	Balance           int64     `json:"balance"`
 	PasswordChangedAt time.Time `json:"password_changed_at"`
 	CreatedAt         time.Time `json:"created_at"`
@@ -17,7 +17,7 @@ type accountRes struct {
 func accountResponse(acc db.Account) accountRes {
 	return accountRes{
 		ID:                acc.ID,
-		FullName:          acc.FullName,
+		Email:             acc.Email,
 		Balance:           acc.Balance,
 		PasswordChangedAt: acc.PasswordChangedAt,
 		CreatedAt:         acc.CreatedAt,

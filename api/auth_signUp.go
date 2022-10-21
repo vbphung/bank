@@ -9,7 +9,7 @@ import (
 )
 
 type signUpReq struct {
-	FullName string `json:"full_name" binding:"required"`
+	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required,min=8"`
 }
 
@@ -32,7 +32,7 @@ func (server *Server) signUp(ctx *gin.Context) {
 	}
 
 	acc, err := server.store.CreateAccount(ctx, db.CreateAccountParams{
-		FullName: req.FullName,
+		Email:    req.Email,
 		Password: hashedPassword,
 		Balance:  int64(0),
 	})

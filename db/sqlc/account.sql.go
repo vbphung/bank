@@ -13,7 +13,7 @@ const changePassword = `-- name: ChangePassword :one
 update accounts
 set password = $2
 where id = $1
-returning id, full_name, password, balance, password_changed_at, created_at
+returning id, email, password, balance, password_changed_at, created_at
 `
 
 type ChangePasswordParams struct {
@@ -26,7 +26,7 @@ func (q *Queries) ChangePassword(ctx context.Context, arg ChangePasswordParams) 
 	var i Account
 	err := row.Scan(
 		&i.ID,
-		&i.FullName,
+		&i.Email,
 		&i.Password,
 		&i.Balance,
 		&i.PasswordChangedAt,
@@ -36,23 +36,23 @@ func (q *Queries) ChangePassword(ctx context.Context, arg ChangePasswordParams) 
 }
 
 const createAccount = `-- name: CreateAccount :one
-insert into accounts (full_name, password, balance)
+insert into accounts (email, password, balance)
 values ($1, $2, $3)
-returning id, full_name, password, balance, password_changed_at, created_at
+returning id, email, password, balance, password_changed_at, created_at
 `
 
 type CreateAccountParams struct {
-	FullName string `json:"full_name"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
 	Balance  int64  `json:"balance"`
 }
 
 func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (Account, error) {
-	row := q.db.QueryRowContext(ctx, createAccount, arg.FullName, arg.Password, arg.Balance)
+	row := q.db.QueryRowContext(ctx, createAccount, arg.Email, arg.Password, arg.Balance)
 	var i Account
 	err := row.Scan(
 		&i.ID,
-		&i.FullName,
+		&i.Email,
 		&i.Password,
 		&i.Balance,
 		&i.PasswordChangedAt,
@@ -64,7 +64,7 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (A
 const deleteAccount = `-- name: DeleteAccount :one
 delete from accounts
 where id = $1
-returning id, full_name, password, balance, password_changed_at, created_at
+returning id, email, password, balance, password_changed_at, created_at
 `
 
 func (q *Queries) DeleteAccount(ctx context.Context, id int64) (Account, error) {
@@ -72,7 +72,7 @@ func (q *Queries) DeleteAccount(ctx context.Context, id int64) (Account, error) 
 	var i Account
 	err := row.Scan(
 		&i.ID,
-		&i.FullName,
+		&i.Email,
 		&i.Password,
 		&i.Balance,
 		&i.PasswordChangedAt,
@@ -82,7 +82,7 @@ func (q *Queries) DeleteAccount(ctx context.Context, id int64) (Account, error) 
 }
 
 const readAccount = `-- name: ReadAccount :one
-select id, full_name, password, balance, password_changed_at, created_at from accounts
+select id, email, password, balance, password_changed_at, created_at from accounts
 where id = $1
 limit 1
 `
@@ -92,7 +92,7 @@ func (q *Queries) ReadAccount(ctx context.Context, id int64) (Account, error) {
 	var i Account
 	err := row.Scan(
 		&i.ID,
-		&i.FullName,
+		&i.Email,
 		&i.Password,
 		&i.Balance,
 		&i.PasswordChangedAt,
@@ -102,7 +102,7 @@ func (q *Queries) ReadAccount(ctx context.Context, id int64) (Account, error) {
 }
 
 const readAccountForUpdate = `-- name: ReadAccountForUpdate :one
-select id, full_name, password, balance, password_changed_at, created_at from accounts
+select id, email, password, balance, password_changed_at, created_at from accounts
 where id = $1
 limit 1
 for no key update
@@ -113,7 +113,7 @@ func (q *Queries) ReadAccountForUpdate(ctx context.Context, id int64) (Account, 
 	var i Account
 	err := row.Scan(
 		&i.ID,
-		&i.FullName,
+		&i.Email,
 		&i.Password,
 		&i.Balance,
 		&i.PasswordChangedAt,
@@ -126,7 +126,7 @@ const updateBalance = `-- name: UpdateBalance :one
 update accounts
 set balance = balance + $1
 where id = $2
-returning id, full_name, password, balance, password_changed_at, created_at
+returning id, email, password, balance, password_changed_at, created_at
 `
 
 type UpdateBalanceParams struct {
@@ -139,7 +139,7 @@ func (q *Queries) UpdateBalance(ctx context.Context, arg UpdateBalanceParams) (A
 	var i Account
 	err := row.Scan(
 		&i.ID,
-		&i.FullName,
+		&i.Email,
 		&i.Password,
 		&i.Balance,
 		&i.PasswordChangedAt,

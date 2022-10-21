@@ -10,7 +10,7 @@ import (
 
 type Account struct {
 	ID                int64     `json:"id"`
-	FullName          string    `json:"full_name"`
+	Email             string    `json:"email"`
 	Password          string    `json:"password"`
 	Balance           int64     `json:"balance"`
 	PasswordChangedAt time.Time `json:"password_changed_at"`

@@ -1,5 +1,5 @@
 -- name: CreateAccount :one
-insert into accounts (full_name, password, balance)
+insert into accounts (email, password, balance)
 values ($1, $2, $3)
 returning *;
 

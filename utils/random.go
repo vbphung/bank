@@ -10,7 +10,7 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-func RandomFullName() string {
+func RandomEmail() string {
 	return fmt.Sprintf("%s %s", pickFirstName(), pickLastName())
 }
 

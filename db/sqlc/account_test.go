@@ -20,7 +20,7 @@ func TestReadAccount(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, readAcc)
 
-	require.Equal(t, readAcc.FullName, acc.FullName)
+	require.Equal(t, readAcc.Email, acc.Email)
 	require.Equal(t, readAcc.Balance, acc.Balance)
 	require.Equal(t, readAcc.CreatedAt, acc.CreatedAt)
 }
@@ -66,7 +66,7 @@ func createAcc(t *testing.T) Account {
 	require.NoError(t, err)
 
 	args := CreateAccountParams{
-		FullName: utils.RandomFullName(),
+		Email:    utils.RandomEmail(),
 		Password: hashedPassword,
 		Balance:  utils.RandomAmount(100, 1000),
 	}
