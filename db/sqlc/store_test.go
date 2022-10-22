@@ -79,11 +79,11 @@ func TestTransfer(t *testing.T) {
 		require.Equal(t, int64(0), fromDiff+toDiff)
 	}
 
-	finalFromAcc, err := testQueries.ReadAccount(context.Background(), initFromAcc.ID)
+	finalFromAcc, err := testQueries.ReadAccount(context.Background(), initFromAcc.Email)
 	require.NoError(t, err)
 	require.Equal(t, initFromAcc.Balance-totalAmount, finalFromAcc.Balance)
 
-	finalToAcc, err := testQueries.ReadAccount(context.Background(), initToAcc.ID)
+	finalToAcc, err := testQueries.ReadAccount(context.Background(), initToAcc.Email)
 	require.NoError(t, err)
 	require.Equal(t, initToAcc.Balance+totalAmount, finalToAcc.Balance)
 }
@@ -124,11 +124,11 @@ func TestDeadlock(t *testing.T) {
 		require.NoError(t, err)
 	}
 
-	finalAcc1, err := testQueries.ReadAccount(context.Background(), acc1.ID)
+	finalAcc1, err := testQueries.ReadAccount(context.Background(), acc1.Email)
 	require.NoError(t, err)
 	require.Equal(t, acc1.Balance, finalAcc1.Balance)
 
-	finalAcc2, err := testQueries.ReadAccount(context.Background(), acc2.ID)
+	finalAcc2, err := testQueries.ReadAccount(context.Background(), acc2.Email)
 	require.NoError(t, err)
 	require.Equal(t, acc2.Balance, finalAcc2.Balance)
 }

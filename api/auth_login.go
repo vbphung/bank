@@ -10,7 +10,7 @@ import (
 )
 
 type loginReq struct {
-	ID       int64  `uri:"id" binding:"required,min=1"`
+	Email    string `uri:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required,min=8"`
 }
 
@@ -26,7 +26,7 @@ func (server *Server) login(ctx *gin.Context) {
 		return
 	}
 
-	acc, err := server.store.ReadAccount(ctx, req.ID)
+	acc, err := server.store.ReadAccount(ctx, req.Email)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, utils.FailedResponse(err))

@@ -15,7 +15,7 @@ func TestCreateAccount(t *testing.T) {
 func TestReadAccount(t *testing.T) {
 	acc := createAcc(t)
 
-	readAcc, err := testQueries.ReadAccount(context.Background(), acc.ID)
+	readAcc, err := testQueries.ReadAccount(context.Background(), acc.Email)
 
 	require.NoError(t, err)
 	require.NotEmpty(t, readAcc)

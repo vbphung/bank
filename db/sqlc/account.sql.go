@@ -83,33 +83,12 @@ func (q *Queries) DeleteAccount(ctx context.Context, id int64) (Account, error) 
 
 const readAccount = `-- name: ReadAccount :one
 select id, email, password, balance, password_changed_at, created_at from accounts
-where id = $1
+where email = $1
 limit 1
 `
 
-func (q *Queries) ReadAccount(ctx context.Context, id int64) (Account, error) {
-	row := q.db.QueryRowContext(ctx, readAccount, id)
-	var i Account
-	err := row.Scan(
-		&i.ID,
-		&i.Email,
-		&i.Password,
-		&i.Balance,
-		&i.PasswordChangedAt,
-		&i.CreatedAt,
-	)
-	return i, err
-}
-
-const readAccountForUpdate = `-- name: ReadAccountForUpdate :one
-select id, email, password, balance, password_changed_at, created_at from accounts
-where id = $1
-limit 1
-for no key update
-`
-
-func (q *Queries) ReadAccountForUpdate(ctx context.Context, id int64) (Account, error) {
-	row := q.db.QueryRowContext(ctx, readAccountForUpdate, id)
+func (q *Queries) ReadAccount(ctx context.Context, email string) (Account, error) {
+	row := q.db.QueryRowContext(ctx, readAccount, email)
 	var i Account
 	err := row.Scan(
 		&i.ID,

@@ -9,7 +9,7 @@ import (
 )
 
 type readAccountReq struct {
-	ID int64 `uri:"id" binding:"required,min=1"`
+	Account string `uri:"account" binding:"required,email"`
 }
 
 func (server *Server) readAccount(ctx *gin.Context) {
@@ -19,7 +19,7 @@ func (server *Server) readAccount(ctx *gin.Context) {
 		return
 	}
 
-	acc, err := server.store.ReadAccount(ctx, req.ID)
+	acc, err := server.store.ReadAccount(ctx, req.Account)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, utils.FailedResponse(err))

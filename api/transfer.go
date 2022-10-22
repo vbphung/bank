@@ -11,9 +11,9 @@ import (
 )
 
 type transferReq struct {
-	FromID int64 `json:"from_id" binding:"required,min=1"`
-	ToID   int64 `json:"to_id" binding:"required,min=1"`
-	Amount int64 `json:"amount" binding:"required,gt=0"`
+	FromAcc string `json:"from_account" binding:"required,email"`
+	ToAcc   string `json:"to_account" binding:"required,email"`
+	Amount  int64  `json:"amount" binding:"required,gt=0"`
 }
 
 func (server *Server) transfer(ctx *gin.Context) {
@@ -23,13 +23,14 @@ func (server *Server) transfer(ctx *gin.Context) {
 		return
 	}
 
-	if err := server.verifyTransfer(ctx, req); err != nil {
+	fromId, toId, err := server.verifyTransfer(ctx, req)
+	if err != nil {
 		ctx.JSON(http.StatusBadRequest, utils.FailedResponse(err))
 	}
 
 	trfRes, err := server.store.Transfer(ctx, db.TransferParams{
-		FromAcc: req.FromID,
-		ToAcc:   req.ToID,
+		FromAcc: fromId,
+		ToAcc:   toId,
 		Amount:  req.Amount,
 	})
 
@@ -41,28 +42,34 @@ func (server *Server) transfer(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, utils.SuccessResponse(trfRes))
 }
 
-func (server *Server) verifyTransfer(ctx *gin.Context, req transferReq) error {
+func (server *Server) verifyTransfer(ctx *gin.Context, req transferReq) (fromId int64, toId int64, err error) {
 	authPayload := ctx.MustGet("auth_payload").(*token.Payload)
-	if int64(authPayload.ID[0]) != req.FromID {
-		return errors.New("cannot transfer money from other's account")
+	if authPayload.Email != req.FromAcc {
+		err = errors.New("cannot transfer money from other's account")
+		return
 	}
 
-	if req.FromID == req.ToID {
-		return errors.New("cannot transfer to yourself")
+	if req.FromAcc == req.ToAcc {
+		err = errors.New("cannot transfer to yourself")
+		return
 	}
 
-	fromAcc, err := server.store.ReadAccount(ctx, req.FromID)
+	fromAcc, err := server.store.ReadAccount(ctx, req.FromAcc)
 	if err != nil {
-		return err
+		err = errors.New("cannot find from account")
+		return
 	}
 
 	if fromAcc.Balance < req.Amount {
-		return errors.New("insufficient money to transfer")
+		err = errors.New("insufficient money to transfer")
+		return
 	}
 
-	if _, err = server.store.ReadAccount(ctx, req.ToID); err != nil {
-		return err
+	toAcc, err := server.store.ReadAccount(ctx, req.ToAcc)
+	if err != nil {
+		err = errors.New("cannot find to account")
+		return
 	}
 
-	return nil
+	return fromAcc.ID, toAcc.ID, nil
 }

@@ -5,14 +5,8 @@ returning *;
 
 -- name: ReadAccount :one
 select * from accounts
-where id = $1
+where email = $1
 limit 1;
-
--- name: ReadAccountForUpdate :one
-select * from accounts
-where id = $1
-limit 1
-for no key update;
 
 -- name: ChangePassword :one
 update accounts
