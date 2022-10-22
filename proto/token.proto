@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+
+message TokenRes {
+  string token = 1;
+  google.protobuf.Timestamp expired_at = 2;
+}

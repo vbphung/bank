@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package pb;
+
+import "auth_signUp.proto";
+import "auth_login.proto";
+
+service Bank {
+  rpc SignUp(SignUpReq) returns (SignUpRes) {}
+  rpc Login(LoginReq) returns (LoginRes) {}
+}

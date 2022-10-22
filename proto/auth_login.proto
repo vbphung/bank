@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pb;
+
+import "token.proto";
+
+message LoginReq {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginRes {
+  TokenRes access_token = 2;
+  TokenRes refresh_token = 3;
+}

@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package pb;
+
+import "account.proto";
+import "token.proto";
+
+message SignUpReq {
+  string email = 1;
+  string password = 2;
+}
+
+message SignUpRes {
+  TokenRes access_token = 1;
+  TokenRes refresh_token = 2;
+  Account account = 3;
+}

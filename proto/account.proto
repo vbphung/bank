@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+
+message Account {
+  string email = 1;
+  google.protobuf.Timestamp password_changed_at = 2;
+  google.protobuf.Timestamp created_at = 3;
+}
