@@ -13,6 +13,11 @@ type loginReq struct {
 	Password string `json:"password" binding:"required,min=8"`
 }
 
+type loginRes struct {
+	AccessToken  tokenRes `json:"access_token"`
+	RefreshToken tokenRes `json:"refresh_token"`
+}
+
 func (server *Server) login(ctx *gin.Context) {
 	var req loginReq
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -37,7 +42,7 @@ func (server *Server) login(ctx *gin.Context) {
 		return
 	}
 
-	tkRes, err := server.generateToken(ctx, acc.Email)
+	res, err := server.generateToken(ctx, acc.Email)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, utils.FailedResponse(err))
 		return
@@ -45,6 +50,6 @@ func (server *Server) login(ctx *gin.Context) {
 
 	ctx.JSON(
 		http.StatusOK,
-		utils.SuccessResponse(tkRes),
+		utils.SuccessResponse(res),
 	)
 }

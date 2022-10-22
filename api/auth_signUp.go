@@ -14,7 +14,7 @@ type signUpReq struct {
 }
 
 type signUpRes struct {
-	tokenRes
+	loginRes
 	Account accountRes `json:"account"`
 }
 
@@ -42,7 +42,7 @@ func (server *Server) signUp(ctx *gin.Context) {
 		return
 	}
 
-	tkRes, err := server.generateToken(ctx, acc.Email)
+	loginRes, err := server.generateToken(ctx, acc.Email)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, utils.FailedResponse(err))
 		return
@@ -53,7 +53,7 @@ func (server *Server) signUp(ctx *gin.Context) {
 		utils.SuccessResponse(
 			signUpRes{
 				Account:  accountResponse(acc),
-				tokenRes: tkRes,
+				loginRes: loginRes,
 			},
 		),
 	)
