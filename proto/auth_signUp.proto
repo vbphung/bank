@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package pb;
+option go_package = "github.com/vbph/bank/pb";
 
 import "account.proto";
 import "token.proto";
