@@ -43,7 +43,7 @@ func (server *Server) transfer(ctx *gin.Context) {
 
 func (server *Server) verifyTransfer(ctx *gin.Context, req transferReq) error {
 	authPayload := ctx.MustGet("auth_payload").(*token.Payload)
-	if authPayload.AccountID != req.FromID {
+	if int64(authPayload.ID[0]) != req.FromID {
 		return errors.New("cannot transfer money from other's account")
 	}
 

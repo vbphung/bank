@@ -43,7 +43,7 @@ func (server *Server) login(ctx *gin.Context) {
 		return
 	}
 
-	payload, accessTk, err := server.tokenMaker.CreateToken(acc.ID, server.config.AccessTokenExpiredTime)
+	payload, accessTk, err := server.tokenMaker.CreateToken(acc.Email, server.config.AccessTokenExpiredTime)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, utils.FailedResponse(err))
 		return
@@ -54,7 +54,7 @@ func (server *Server) login(ctx *gin.Context) {
 		ExpiredAt: payload.ExpiredAt,
 	}
 
-	payload, refreshTk, err := server.tokenMaker.CreateToken(acc.ID, server.config.RefreshTokenExpiredTime)
+	payload, refreshTk, err := server.tokenMaker.CreateToken(acc.Email, server.config.RefreshTokenExpiredTime)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, utils.FailedResponse(err))
 		return
@@ -62,7 +62,7 @@ func (server *Server) login(ctx *gin.Context) {
 
 	if _, err = server.store.CreateSession(ctx, db.CreateSessionParams{
 		ID:           payload.ID,
-		Email:        string(payload.AccountID),
+		Email:        payload.Email,
 		RefreshToken: refreshTk,
 		ExpiredAt:    payload.ExpiredAt,
 	}); err != nil {
