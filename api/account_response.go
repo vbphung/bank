@@ -3,7 +3,6 @@ package api
 import (
 	"time"
 
-	"github.com/google/uuid"
 	db "github.com/vbph/bank/db/sqlc"
 )
 
@@ -13,16 +12,6 @@ type accountRes struct {
 	Balance           int64     `json:"balance"`
 	PasswordChangedAt time.Time `json:"password_changed_at"`
 	CreatedAt         time.Time `json:"created_at"`
-}
-
-type tokenRes struct {
-	Token     string    `json:"token"`
-	ExpiredAt time.Time `json:"expired_at"`
-}
-
-type refreshTokenRes struct {
-	tokenRes
-	ID uuid.UUID `json:"id"`
 }
 
 func accountResponse(acc db.Account) accountRes {
