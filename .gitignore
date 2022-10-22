@@ -1,1 +1,9 @@
+**/.DS_Store
+go.sum
 pb
+db/sqlc
+
+!db/sqlc/store.go
+!db/sqlc/store_test.go
+!db/sqlc/account_test.go
+!db/sqlc/main_test.go
