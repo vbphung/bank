@@ -26,7 +26,14 @@ func (server *Server) SignUp(ctx context.Context, req *pb.SignUpReq) (*pb.SignUp
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
+	accessTk, refreshTk, err := server.generateToken(ctx, acc.Email)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
 	return &pb.SignUpRes{
-		Account: accountResponse(acc),
+		AccessToken:  accessTk,
+		RefreshToken: refreshTk,
+		Account:      accountResponse(acc),
 	}, nil
 }

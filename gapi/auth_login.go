@@ -25,5 +25,13 @@ func (server *Server) Login(ctx context.Context, req *pb.LoginReq) (*pb.LoginRes
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	return &pb.LoginRes{}, nil
+	accessTk, refreshTk, err := server.generateToken(ctx, req.Email)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	return &pb.LoginRes{
+		AccessToken:  accessTk,
+		RefreshToken: refreshTk,
+	}, nil
 }
