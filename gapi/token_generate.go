@@ -24,10 +24,14 @@ func (server *Server) generateToken(ctx context.Context, email string) (accessTk
 		return
 	}
 
+	md := server.extractMetadata(ctx)
+
 	if _, err = server.store.CreateSession(ctx, db.CreateSessionParams{
 		ID:           payload.ID,
 		Email:        payload.Email,
 		RefreshToken: refreshTk,
+		UserAgent:    md.UserAgent,
+		ClientIp:     md.ClientIp,
 		ExpiredAt:    payload.ExpiredAt,
 	}); err != nil {
 		return
