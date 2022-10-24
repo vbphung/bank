@@ -12,7 +12,7 @@ import "auth_login.proto";
 service Bank {
   rpc SignUp(SignUpReq) returns (SignUpRes) {
     option (google.api.http) = {
-      post : "/v1/sign_up"
+      post : "/v1/sign-up"
       body : "*"
     };
   }
