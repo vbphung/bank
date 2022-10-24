@@ -2,6 +2,7 @@
 go.sum
 pb
 db/sqlc
+proto/google
 
 !db/sqlc/store.go
 !db/sqlc/store_test.go

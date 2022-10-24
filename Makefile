@@ -35,4 +35,22 @@ proto:
 evans:
 	evans --host localhost --port 9090 -r repl
 
-.PHONY: init-postgres create-db drop-db migrate-up migrate-down sqlc test server proto evans
+googleapis:
+	rm -rf ~/googleapis
+	git clone https://github.com/googleapis/googleapis.git ~/googleapis
+
+	mkdir proto/google
+	mkdir proto/google/api
+
+	cp ~/googleapis/google/api/annotations.proto ./proto/google/api
+	cp ~/googleapis/google/api/field_behavior.proto ./proto/google/api
+	cp ~/googleapis/google/api/http.proto ./proto/google/api
+	cp ~/googleapis/google/api/httpbody.proto ./proto/google/api
+
+init-project:
+	make sqlc
+	make googleapis
+	make proto
+	go mod tidy
+
+.PHONY: init-postgres create-db drop-db migrate-up migrate-down sqlc test server proto evans googleapis init-project
