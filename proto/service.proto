@@ -1,12 +1,26 @@
 syntax = "proto3";
 
 package pb;
+
 option go_package = "github.com/vbph/bank/pb";
+
+import "google/api/annotations.proto";
 
 import "auth_signUp.proto";
 import "auth_login.proto";
 
 service Bank {
-  rpc SignUp(SignUpReq) returns (SignUpRes) {}
-  rpc Login(LoginReq) returns (LoginRes) {}
+  rpc SignUp(SignUpReq) returns (SignUpRes) {
+    option (google.api.http) = {
+      post : "/v1/sign_up"
+      body : "*"
+    };
+  }
+
+  rpc Login(LoginReq) returns (LoginRes) {
+    option (google.api.http) = {
+      post : "/v1/login"
+      body : "*"
+    };
+  }
 }
